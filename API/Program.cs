@@ -1,9 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using infrastructure.Data;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -11,9 +11,23 @@ namespace API
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+           var host = CreateHostBuilder(args).Build();
+           using(var scope = host.Services.CreateScope()) {              
+               var logger = scope.ServiceProvider.GetRequiredService<ILoggerFactory>();
+
+               try {
+                    var context = scope.ServiceProvider.GetRequiredService<DataContext>();
+                    await context.Database.MigrateAsync();
+               }
+
+               catch(Exception ex) {
+                   var log = logger.CreateLogger<Program>();
+                   log.LogError(ex,"An Error occured");
+               }
+           }
+           host.Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
