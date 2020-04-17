@@ -1,9 +1,9 @@
-using System.ComponentModel.DataAnnotations.Schema;
+
 namespace core.Entities
 {
     public class Product:BaseEntity
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        
         public string Name { get; set; }
         public string Description { get; set; }
         public decimal Price { get; set; }

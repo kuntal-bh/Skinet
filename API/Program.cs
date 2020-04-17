@@ -20,6 +20,7 @@ namespace API
                try {
                     var context = scope.ServiceProvider.GetRequiredService<DataContext>();
                     await context.Database.MigrateAsync();
+                    await StoreSeedContext.SeedContextAsync(context,logger);
                }
 
                catch(Exception ex) {
